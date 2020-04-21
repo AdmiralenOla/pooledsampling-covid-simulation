@@ -57,10 +57,7 @@ run_simulation_experiment <- function(num_samples,prevalence,pooling_levels,repl
       for (pool in 1:length(pooling_levels)){ #3
         # Calculate p-bar for all replicates of this parameter combination
         this_sample <- replicate(replicates,calculate_p_bar(population[,prev],num_samples[nsamp],pooling_levels[pool],Se,Sp))
-        
-        # Add meta-info to this_sample
-        cname <- paste0(num_samples[nsamp],"_",prevalence[col],"_",pool)
-        
+                
         # Add parameter combinations
         Res_parameters[nrow(Res_parameters)+1,] <- c(num_samples[nsamp],prevalence[prev], pooling_levels[pool])
         Res_replicates[nrow(Res_replicates)+1,] <- this_sample
