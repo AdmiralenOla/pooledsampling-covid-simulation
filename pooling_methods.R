@@ -142,6 +142,25 @@ sample_size_machine.k <- function(p, k,alpha=0.05,Sp=1.0,Se=0.95){
   return(ceiling(log(1-(1-alpha))/log(falseneg+trueneg)))
 }
 
+
+# Difference between two binomial functions - Credit https://gist.github.com/coppeliaMLA/9681819
+diffBin<-function(z, n1, p1, n2, p2){
+  # calculates probability for z (x-y)
+  prob<-0
+  if (z>=0){  
+    for (i in 1:n1){     
+      prob<-prob+dbinom(i+z, n1, p1)*dbinom(i, n2, p2)
+    }
+  }
+  else
+  {
+    for (i in 1:n2){     
+      prob<-prob+dbinom(i+z, n1, p1)*dbinom(i, n2, p2)
+    }
+  }
+  return(prob)
+}
+
 #### PLOTTING ####
 
 # Takes a bunch of rows and draws polygons
