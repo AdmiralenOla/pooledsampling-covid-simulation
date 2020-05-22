@@ -87,3 +87,19 @@ lines(wideprevalence,my.df[,8],type="l",col=mycolswide[8])
 lines(wideprevalence,my.df[,9],type="l",col=mycolswide[9])
 lines(wideprevalence,my.df[,10],type="l",col=mycolswide[10])
 legend("topright",legend=poolsizes,fill=mycolswide,title = "k")
+
+# Discriminating disease-free from low-prevalence with imperfect test
+Se=0.95
+Sp=0.99
+prev = 0.005
+
+p2 = (1-Sp)
+p1 = Se*prev + (1-prev)*(1-Sp)
+s <- -100:100 # s = the list of z values to calculate probability for. Only calculating from -100 to +100
+# e.g. I expect the probability of z values outside this range to be impossible, for example 10000 more positive samples
+# from disease-free than from low-prevalence population
+
+# Example with n=2743
+n <- 2743
+p <- sapply(s, function(x) diffBin(x,n,p1,n,p2))
+sum(p[101:201]) # Probability from 0 to 100 sums to 95% 
