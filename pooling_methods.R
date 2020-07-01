@@ -161,6 +161,63 @@ diffBin<-function(z, n1, p1, n2, p2){
   return(prob)
 }
 
+
+#### TESTING EFFICIENCY OF VARIOUS STRATEGIES ####
+
+binary_search_fixedsample <- function(sample,k,Se=0.95,Sp=0.99,correct=0,incorrect=0,num_tests=0){
+  # Divide sample into sizes of k. Aggregate binary search numbers
+  if (length(sample) == k) { splitssamples <- split(sample,f = 1)}
+  else {splitssamples <- chunk(sample,length(sample)/k)}
+  res <- list("num"=0,"corr"=0,"inc"=0)
+  for (s in splitssamples){
+    tmp <- binary_search_sample(s)
+    res$num <- res$num + tmp$num
+    res$corr <- res$corr + tmp$corr
+    res$inc <- res$inc + tmp$inc
+  }
+  return(res)
+}
+
+binary_search_sample <- function(sample,Se=0.95,Sp=0.99,correct=0,incorrect=0,num_tests=0){
+  # Takes in a sample pool of N people. Tests if sample positive or negative
+  # If negative - Clear entire sample (and evaluate num_tests, correct and incorrect diagnoses)
+  # If positive - Split sample into 2, add up num_tests,correct and incorrect diagnoses
+  # num_tests should know the number of tests in this group WITH lower groups (not higher)
+  if (1 %in% sample){
+    # True sick in sample pool
+    testres <- rbinom(n=1,size=1,prob=Se)
+    num_tests <- 1
+  }
+  else {
+    # No sick in sample pool
+    testres <- rbinom(n = 1,size = 1,prob = 1-Sp)
+    num_tests <- 1
+  }
+  if (testres == 1) {
+    if (length(sample) == 1){
+      # Single sample
+      correct <- sum(sample==1) + correct
+      incorrect <- sum(sample==0) + incorrect
+      return(list("num"=num_tests,"corr"=correct,"inc"=incorrect))
+    }
+    else {
+      # Binary split
+      sample_div <- chunk(x = sample,n = 2)
+      left <- binary_search_sample(sample_div[[1]],Se,Sp,correct,incorrect)
+      right <- binary_search_sample(sample_div[[2]],Se,Sp,correct,incorrect)
+      num_tests <- num_tests + left$num + right$num
+      correct <- correct + left$corr + right$corr
+      incorrect <- incorrect + left$inc + right$inc
+      return(list("num"=num_tests,"corr"=correct,"inc"=incorrect))
+    }
+  }
+  else {
+    correct <- sum(sample==0) + correct
+    incorrect <- sum(sample==1) + incorrect
+    return(list("num"=num_tests,"corr"=correct,"inc"=incorrect))
+  }
+}
+
 #### PLOTTING ####
 
 # Takes a bunch of rows and draws polygons
