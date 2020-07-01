@@ -103,3 +103,28 @@ s <- -100:100 # s = the list of z values to calculate probability for. Only calc
 n <- 2743
 p <- sapply(s, function(x) diffBin(x,n,p1,n,p2))
 sum(p[101:201]) # Probability from 0 to 100 sums to 95% 
+
+            
+#### BINARY SEARCHES TO DETERMINE SAVINGS OF POOLING ####
+## GETTING AGGREGATED DATA
+i <- 0
+pb <- txtProgressBar(min = 0, max = length(num_samples)*length(prevalence)*length(pooling_levels), style = 3)
+Res_binary <- as.data.frame(matrix(ncol=7,nrow=0,dimnames=list(NULL,c("p","N","k","num_low","num_median","num_high","incperc_median"))))
+
+for (prev in 1:length(prevalence)){ #1  (nsamp in 1:length(num_samples))
+  for (nsamp in 1:length(num_samples)){ #2 (co
+    for (pool in 1:length(pooling_levels)){ #3
+      # Calculate p-bar for all replicates of this parameter combination
+      this_sample <- replicate(500,expr=binary_search_fixedsample(rbinom(n=num_samples[nsamp],size = 1,prob=prevalence[prev]),k=pooling_levels[pool]))
+      # Add parameter combinations
+      #Res_parameters[nrow(Res_parameters)+1,] <- c(prevalence[prev], pooling_levels[pool])
+      #Res_replicates[nrow(Res_replicates)+1,] <- this_sample
+      numbers <- quantile(unlist(this_sample[1,]),probs = c(0.025,0.5,0.975),na.rm=TRUE)
+      inc_perc_median <- median(unlist(this_sample[3])/num_samples[nsamp],na.rm = TRUE)
+      Res_binary[nrow(Res_binary)+1,] <- c(prevalence[prev],num_samples[nsamp],pooling_levels[pool],numbers,inc_perc_median)
+
+      i <- i + 1
+      setTxtProgressBar(pb, i)
+    }
+  }
+}
