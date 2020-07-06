@@ -116,7 +116,7 @@ run_simulation_experiment.infinite <- function(num_samples,prevalence,pooling_le
         # Calculate p-bar for all replicates of this parameter combination
         # First, calculate the fractions of positive pools
         fractions <- accumulate_fractions(replicates=replicates,p = prevalence[prev],n = num_samples[nsamp],k=pooling_levels[pool],Se,Sp)
-        this_sample <- tu.method(fractions,pooling_levels[pool])
+        this_sample <- tu.method(fractions,pooling_levels[pool],Se,Sp)
         
         # Add parameter combinations
         Res[nrow(Res)+1,] <- c(num_samples[nsamp],prevalence[prev], pooling_levels[pool],this_sample)
