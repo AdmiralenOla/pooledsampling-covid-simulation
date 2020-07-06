@@ -263,6 +263,10 @@ create_plot_row <- function(rows){
   rows <- rows[!rows$high > 0.3,]
   poolsizes <- unique(rows$k)
   prevalence <- unique(rows$p)
+  # No estimates should be lower than 0
+  rows$low <- sapply(X = rows$low,FUN=max,0)
+  rows$median <- sapply(X=rows$median,FUN=max,0)
+  rows$high <- sapply(X=rows$high,FUN=max,0)
   low_estimates <- rows$low
   mediab_estimtes <- rows$median
   high_estimates <- rows$high
