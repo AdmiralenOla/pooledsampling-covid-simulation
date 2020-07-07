@@ -170,7 +170,7 @@ binary_search_fixedsample <- function(sample,k,Se=0.95,Sp=0.99,correct=0,incorre
   else {splitssamples <- chunk(sample,length(sample)/k)}
   res <- list("num"=0,"corr"=0,"inc"=0)
   for (s in splitssamples){
-    tmp <- binary_search_sample(s)
+    tmp <- binary_search_sample(s,Se=Se,Sp=Sp)
     res$num <- res$num + tmp$num
     res$corr <- res$corr + tmp$corr
     res$inc <- res$inc + tmp$inc
@@ -194,26 +194,28 @@ binary_search_sample <- function(sample,Se=0.95,Sp=0.99,correct=0,incorrect=0,nu
     num_tests <- 1
   }
   if (testres == 1) {
+    # Positive test result
     if (length(sample) == 1){
       # Single sample
-      correct <- sum(sample==1) + correct
-      incorrect <- sum(sample==0) + incorrect
+      correct <- sum(sample==1)
+      incorrect <- sum(sample==0)
       return(list("num"=num_tests,"corr"=correct,"inc"=incorrect))
     }
     else {
       # Binary split
       sample_div <- chunk(x = sample,n = 2)
-      left <- binary_search_sample(sample_div[[1]],Se,Sp,correct,incorrect)
-      right <- binary_search_sample(sample_div[[2]],Se,Sp,correct,incorrect)
+      left <- binary_search_sample(sample_div[[1]],Se,Sp)
+      right <- binary_search_sample(sample_div[[2]],Se,Sp)
       num_tests <- num_tests + left$num + right$num
-      correct <- correct + left$corr + right$corr
-      incorrect <- incorrect + left$inc + right$inc
+      correct <- left$corr + right$corr
+      incorrect <- left$inc + right$inc
       return(list("num"=num_tests,"corr"=correct,"inc"=incorrect))
     }
   }
   else {
-    correct <- sum(sample==0) + correct
-    incorrect <- sum(sample==1) + incorrect
+    # Negative test result
+    correct <- sum(sample==0)
+    incorrect <- sum(sample==1)
     return(list("num"=num_tests,"corr"=correct,"inc"=incorrect))
   }
 }
