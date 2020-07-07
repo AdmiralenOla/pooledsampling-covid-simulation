@@ -28,9 +28,16 @@ population <- as.data.frame(population,dimnames=list(NULL,prevalence))
 
 # PERFORM EXPERIMENT
 # Finite population
-RES.FIN <- run_simulation_experiment.finite(num_samples,prevalence,pooling_levels,replicates,population)
+RES.FIN1 <- run_simulation_experiment.finite(num_samples,prevalence,pooling_levels,replicates,population,Se=0.95,Sp=1.0)
+RES.FIN2 <- run_simulation_experiment.finite(num_samples,prevalence,pooling_levels,replicates,population,Se=0.95,Sp=0.99)
+RES.FIN3 <- run_simulation_experiment.finite(num_samples,prevalence,pooling_levels,replicates,population,Se=0.70,Sp=1.0)
+RES.FIN4 <- run_simulation_experiment.finite(num_samples,prevalence,pooling_levels,replicates,population,Se=0.95,Sp=0.99)
+
 #Infinite population, imperfect specificity
-RES.INFIN <- run_simulation_experiment.infinite(num_samples,prevalence,pooling_levels,replicates,Sp=0.99)
+RES.INFIN1 <- run_simulation_experiment.infinite(num_samples,prevalence,pooling_levels,replicates,Se=0.95,Sp=1.0)
+RES.INFIN2 <- run_simulation_experiment.infinite(num_samples,prevalence,pooling_levels,replicates,Se=0.95,Sp=0.99)
+RES.INFIN3 <- run_simulation_experiment.infinite(num_samples,prevalence,pooling_levels,replicates,Se=0.7,Sp=1.0)
+RES.INFIN4 <- run_simulation_experiment.infinite(num_samples,prevalence,pooling_levels,replicates,Se=0.7,Sp=0.99)
 
 
 ######################################
